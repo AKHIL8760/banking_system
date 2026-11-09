@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f5f7fb">
+    <meta name="description" content="A simple personal bank account management demo.">
+    <title>Northstar Bank — Your accounts</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Main navigation">
+        <a class="brand" href="#" aria-label="Northstar Bank home">
+          <span class="brand-mark" aria-hidden="true">N</span>
+          <span>northstar<span class="brand-light">bank</span></span>
+        </a>
+        <p class="nav-label">WORKSPACE</p>
+        <nav>
+          <a class="nav-link active" href="#overview" aria-current="page"><span aria-hidden="true">◫</span> Overview</a>
+          <a class="nav-link" href="#accounts"><span aria-hidden="true">▤</span> My accounts</a>
+          <a class="nav-link" href="#transactions"><span aria-hidden="true">↗</span> Transactions</a>
+        </nav>
+        <div class="sidebar-note">
+          <span class="note-icon" aria-hidden="true">✦</span>
+          <strong>A little more clarity.</strong>
+          <p>Your money, organized in one calm place.</p>
+        </div>
+        <div class="profile">
+          <span class="avatar" aria-hidden="true">JD</span>
+          <span><strong>Jamie Davis</strong><small>Personal account</small></span>
+          <span class="profile-menu" aria-hidden="true">···</span>
+        </div>
+      </aside>
+
+      <main class="main-content" id="overview">
+        <header class="topbar">
+          <div class="mobile-brand"><span class="brand-mark" aria-hidden="true">N</span> northstar bank</div>
+          <span class="secure-label"><span class="secure-dot" aria-hidden="true"></span> Personal banking</span>
+          <button class="icon-button" id="reset-demo" type="button" aria-label="Reset demo data" title="Reset demo data">↻</button>
+        </header>
+
+        <section class="welcome-row">
+          <div>
+            <p class="eyebrow" id="today-label">YOUR FINANCIAL SNAPSHOT</p>
+            <h1>Good morning, Jamie <span aria-hidden="true">✳</span></h1>
+            <p class="subheading">Here's what's happening with your money.</p>
+          </div>
+          <button class="button button-primary" id="add-account" type="button"><span aria-hidden="true">＋</span> Add account</button>
+        </section>
+
+        <section class="summary-grid" aria-label="Account summary">
+          <article class="summary-card balance-card">
+            <div class="summary-heading"><span>Total balance</span><span class="summary-icon" aria-hidden="true">◈</span></div>
+            <p class="summary-value" id="total-balance">—</p>
+            <p class="summary-foot"><span class="balance-indicator" aria-hidden="true">↗</span> Across <span id="account-count">0</span> accounts</p>
+          </article>
+          <article class="summary-card">
+            <div class="summary-heading"><span>Money in</span><span class="summary-icon income-icon" aria-hidden="true">↓</span></div>
+            <p class="summary-value" id="money-in">—</p>
+            <p class="summary-foot">Deposits this month</p>
+          </article>
+          <article class="summary-card">
+            <div class="summary-heading"><span>Money out</span><span class="summary-icon expense-icon" aria-hidden="true">↑</span></div>
+            <p class="summary-value" id="money-out">—</p>
+            <p class="summary-foot">Withdrawals this month</p>
+          </article>
+        </section>
+
+        <section class="section-block" id="accounts">
+          <div class="section-heading">
+            <div><p class="eyebrow">YOUR MONEY</p><h2>Your accounts</h2></div>
+            <button class="text-button" id="add-account-secondary" type="button">＋ New account</button>
+          </div>
+          <div class="account-grid" id="account-list" aria-live="polite"></div>
+        </section>
+
+        <section class="section-block transactions-section" id="transactions">
+          <div class="section-heading">
+            <div><p class="eyebrow">THE LATEST</p><h2>Recent activity</h2></div>
+            <label class="filter-label" for="transaction-filter">Show
+              <select id="transaction-filter">
+                <option value="all">All activity</option>
+                <option value="deposit">Deposits</option>
+                <option value="withdrawal">Withdrawals</option>
+                <option value="transfer">Transfers</option>
+              </select>
+            </label>
+          </div>
+          <div class="transaction-table-wrap">
+            <table class="transaction-table">
+              <thead><tr><th scope="col">Transaction</th><th scope="col">Account</th><th scope="col">Date</th><th scope="col">Amount</th></tr></thead>
+              <tbody id="transaction-list"></tbody>
+            </table>
+            <p class="empty-state" id="empty-transactions" hidden>No transactions match this filter.</p>
+          </div>
+        </section>
+
+        <footer class="page-footer"><span>Northstar Bank · Demo dashboard</span><span>For demonstration only — no real money is moved.</span></footer>
+      </main>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <dialog class="modal" id="transaction-dialog" aria-labelledby="transaction-title">
+      <form id="transaction-form">
+        <div class="modal-heading"><div><p class="eyebrow">ACCOUNT ACTIVITY</p><h2 id="transaction-title">Make a transaction</h2></div><button class="close-button" type="button" data-close aria-label="Close dialog">×</button></div>
+        <label for="transaction-type">What would you like to do?</label>
+        <select id="transaction-type" name="type">
+          <option value="deposit">Deposit</option><option value="withdrawal">Withdraw</option><option value="transfer">Transfer</option>
+        </select>
+        <label for="source-account">From account</label>
+        <select id="source-account" name="sourceAccount" required></select>
+        <div id="destination-field" hidden>
+          <label for="destination-account">To account</label>
+          <select id="destination-account" name="destinationAccount"></select>
+        </div>
+        <label for="transaction-amount">Amount</label>
+        <div class="amount-input"><span aria-hidden="true">₹</span><input id="transaction-amount" name="amount" type="number" min="0.01" step="0.01" placeholder="0.00" required></div>
+        <label for="transaction-note">Note <span class="optional">(optional)</span></label>
+        <input id="transaction-note" name="note" type="text" maxlength="60" placeholder="What's this for?">
+        <p class="form-error" id="transaction-error" role="alert"></p>
+        <button class="button button-primary button-full" type="submit">Confirm transaction</button>
+      </form>
+    </dialog>
+
+    <dialog class="modal" id="account-dialog" aria-labelledby="account-title">
+      <form id="account-form">
+        <div class="modal-heading"><div><p class="eyebrow">YOUR MONEY</p><h2 id="account-title">Open an account</h2></div><button class="close-button" type="button" data-close aria-label="Close dialog">×</button></div>
+        <label for="account-name">Account name</label>
+        <input id="account-name" name="name" type="text" maxlength="32" placeholder="e.g. Holiday savings" required>
+        <label for="account-type">Account type</label>
+        <select id="account-type" name="type"><option value="Savings">Savings</option><option value="Current">Current</option></select>
+        <p class="form-error" id="account-error" role="alert"></p>
+        <button class="button button-primary button-full" type="submit">Create account</button>
+      </form>
+    </dialog>
+  </body>
+</html>
